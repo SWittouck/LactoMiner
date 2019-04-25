@@ -5,5 +5,5 @@ This tool was written as part of a bachelor project in the bachelor of bioscienc
 The students that developed this software are:
 
 * Tom Luijts
-* Alexander
+* Alexander Van Uffelen
 * Jaro
