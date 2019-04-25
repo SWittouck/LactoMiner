@@ -4,6 +4,6 @@ This tool was written as part of a bachelor project in the bachelor of bioscienc
 
 The students that developed this software are:
 
-* Tom
+* Tom Luijts
 * Alexander
 * Jaro
