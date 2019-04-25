@@ -6,4 +6,4 @@ The students that developed this software are:
 
 * Tom Luijts
 * Alexander Van Uffelen
-* Jaro
+* Jaro Verbeeck
