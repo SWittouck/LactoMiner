@@ -1,0 +1,106 @@
+#!/usr/bin/python3
+import os
+import time
+import pandas as pd
+from multiprocessing import Process
+import math
+import subprocess
+import argparse
+import concurrent.futures
+
+start = time.time()
+if __name__ == "__main__":
+    #gather inputs
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input", help="Directory where SraRunTable.txt input file is located.")
+    parser.add_argument("-c","--columns", help="Specify column names that identify the sample's place of isolation. replace spaces in column names by underscores.", nargs='*')
+    parser.add_argument("--output","-o", help="Output directory, default is working directory.", default = str(os.getcwd()))
+    parser.add_argument("--threads","-t", help="Amount of threads used for downloading from ncbi. Default is 1 threads", default = '1')
+    parser.add_argument("--keep", "-k", help="Directory you want to store the downloaded fastq files. They will be deleted by default.")
+    args = parser.parse_args()
+    #define folder where script is running
+    execpath = os.path.dirname(os.path.realpath(__file__)).replace(' ','\ ')
+    #check if FastqFiles folder isn't deleted. If so, delete it
+    if os.path.exists(execpath + '/FastqFiles') == True:
+        os.system('rm -r '+ execpath + '/FastqFiles')
+    
+    #define number of threads in integers
+    threads = int(args.threads)
+    #make a fresh FastqFiles folder for the .fastq files to be downloaded to
+    os.system('mkdir ' + execpath + '/FastqFiles')
+    #import the SRARunSelector input table as tsv file
+    idTable2=pd.read_csv(args.input, sep='\t')
+    #select the Run ID's and put it in lists
+    sample_id_list = idTable2.loc[:,'Run'].to_string(index=False,header=False)
+    SRXTAB2 = idTable2.loc[:,'Run']
+    
+    ## Select SraRunTable.txt columns from input of from predefined list to write in samples.csv
+    head=["Run"]
+    DefList=["Organism","host","host_phenotype","env_biome","env_material","env_feature","specific_host","BioProject"]
+    if args.columns is not None :
+        for item in args.columns :
+            if item in idTable2.iloc[0,:].index :
+                head.append(item)
+            else :
+                print(item + ' is not a column in the Sra Table')
+        if len(head) == 1 :
+            print('none of the provided column names are a column in Sra Table. Switching to default column names')
+            print(DefList)
+    
+    if args.columns is None or len(head) == 1:
+        for item in DefList :
+            if item in idTable2.iloc[0,:].index :
+                head.append(item)
+    
+    #select the experiment ID and the Organism
+    ORGTAB = idTable2.loc[:,head]
+    head[0] = "sample_id"
+    print('printed columns in samples table will be: ' + ' '.join(head))    
+    export_csv = ORGTAB.to_csv(args.output + r'/samples_SRA.csv', index = None, header=head)
+    
+    #function to download one sample
+    def download_sample(sample_id):
+        os.system("fastq-dump -I -O " + execpath + "/FastqFiles/ --split-files " + sample_id)
+    
+    with concurrent.futures.ProcessPoolExecutor(max_workers = threads) as executor:
+        print('using '+str(args.threads) +' cores')
+        executor.map(download_sample, SRXTAB2)
+    
+    #try 3 times to download missing Run's    
+    tries = 1
+    while tries < 4 :
+        sdir=[]
+        retrylist=[]
+        st=0
+        listdir= os.listdir(os.path.dirname(os.path.realpath(__file__))+ '/FastqFiles')
+        for filename in listdir:
+            sdir.append(listdir[st].split("_")[0])
+            st=st + 1
+        setdir = set(sdir)
+        for runName in SRXTAB2 :
+            if not runName in setdir :
+                print(runName + 'is not in the list')
+                retrylist.append(runName)
+        if len(retrylist) != 0 :
+            print('retrying attempt ' + str(tries))
+            if tries == 3:
+                print(df)
+            with concurrent.futures.ProcessPoolExecutor(max_workers = threads) as executor:
+                print('using '+str(args.threads) +' cores')
+                executor.map(download_sample, retrylist)
+        tries = tries + 1
+    
+    #Run the dada2 script
+    os.system('Rscript --vanilla ' + execpath + '/scripts/Script2.R ' + execpath + ' ' + args.output.replace(' ','\ '))
+    
+    #decide whether to keep or remove the fastq files based on input
+    if args.keep is not None:
+        print("moving fastq files to " + args.keep)
+        os.system('rm -r ' + execpath + '/FastqFiles/filtered')
+        os.system('mv ' + execpath + "/FastqFiles" + ' ' + args.keep + '/')
+    else :
+        os.system('rm -r ' + execpath + '/FastqFiles')
+
+    os.system('rm Rplots.pdf')
+    end = time.time()
+    print('runtime: ' + str(end - start))
