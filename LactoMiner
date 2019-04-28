@@ -89,7 +89,14 @@ if __name__ == "__main__":
                 print('using '+str(args.threads) +' cores')
                 executor.map(download_sample, retrylist)
         tries = tries + 1
-    
+    #check for single data and remove these files. Data must be paired for Dada2 to work
+    for filname in listdir :
+        read = filname.split('_')[0]
+        Fread = read + '_1.fastq'
+        Rread = read + '_2.fastq'
+        if not Rread in listdir :
+            print('removing ' + filname + 'because the data is not PAIRED')
+            os.system('rm ' + execpath + "/FastqFiles/" + filname)
     #Run the dada2 script
     os.system('Rscript --vanilla ' + execpath + '/scripts/Script2.R ' + execpath + ' ' + args.output.replace(' ','\ '))
     
