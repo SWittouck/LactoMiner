@@ -7,3 +7,5 @@ The students that developed this software are:
 * Tom Luijts
 * Alexander Van Uffelen
 * Jaro Verbeeck
+
+README file (txt and pdf format) containing instructions is included in the download.
