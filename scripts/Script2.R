@@ -22,8 +22,6 @@ b <- 0 #MaxN
 c <- c(2,2) #MaxEE
 d <- 2  #truncQ
 e <- TRUE #rm.phix
-#f <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim)) 
-#g <- cbind(out, getN(dadaFs), getN(dadaRs), getN(mergers), rowSums(seqtab.nochim)) # If processing a single sample
 
 #-----------------------
 
@@ -101,7 +99,7 @@ rownames(track) <- sample.namesF
 head(track)
 
 #Assign Taxonomy
-taxa <- assignTaxonomy(seqtab.nochim, pathDataB1, multithread=TRUE)
+taxa <- assignTaxonomy(seqtab.nochim, pathDataB1, minBoot=80, taxLevels = c("Kingdom", "Phylum", "Class","Order", "Family", "(Sub)genus", "Species"), multithread=TRUE)
 
 #print taxonomy
 taxa.print <- taxa # Removing sequence rownames for display only
@@ -114,16 +112,16 @@ sample<-rownames(seqtab.nochim)
 sequence <- colnames(seqtab.nochim)
 a=1
 for (i in seq(1,nrow(seqtab.nochim))){
-	  for (j in seq(1,ncol(seqtab.nochim))){
-		      abundances[a,1] <- sample[i]
+          for (j in seq(1,ncol(seqtab.nochim))){
+                      abundances[a,1] <- sample[i]
     abundances[a,2] <- seqtab.nochim[i,j]
         abundances[a,3] <- sequence[j]
         a=a+1
-	  }
+          }
 }
 
-taxa <- cbind(rownames(taxa),taxa.print)
-colnames(taxa)<- c("taxon_id","kingdom","phylum","class","order","family","genus")
+#taxa <- cbind(rownames(taxa),taxa.print)
+#colnames(taxa)<- c("taxon_id","kingdom","phylum","class","order","family","(sub)genus","species")
 colnames(abundances) <- c("sample_id","abundance","taxon_id")
 abundances_df <- as.data.frame(abundances)
 abundances2 <- spread(abundances_df,taxon_id,abundance)
