@@ -54,14 +54,14 @@ optional arguments:
 
   --output output directory/filename, -o output directory/filename
                         Output directory, default is current working directory.
-  --threads {1,2,4}, -t {1,2,4}
+  --threads amount, -t amount
                         Amount of threads used for downloading runs from ncbi, default is 1. Note that whatever you choose for this
 			command line option, dada2 (used for processing and classifying the .fastq sequences) uses all threads. 
 			Multithreaded performance does not scale perfectly with the number of threads used, 
 			but for large queries the difference in runtime is significant.
   --keep directory, -k directory 
 			Directory you want to store the downloaded fastq files. They will be deleted by default.
-  --database, -d directory/filename
+  --database directory/filename, -d directory/filename
   			Specify the directory and filename of a costum database. By default it will used the database that comes with
 			this program (./DB/BigData.fa.gz). More info on the costum database can be found in the 'database' section.
 
