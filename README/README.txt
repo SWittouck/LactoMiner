@@ -136,7 +136,7 @@ Other methods of checking for 16S rRNA are explained in the Usage section.
 Unsuccessful download -------
 Sometimes, the fastq-dump fails to download the .fastq file. When this happens the program will retry to download it up to 3 times. If the download keeps failing the program will move on without that Run.
 
-inimum input -------
+Minimum input -------
 The program will not work if only one SRA Run is supplied. The dada2 script needs at least 2 Runs to produce an output. 
 Fastq files of insufficient quality will be dropped so make sure you at least provide 2 high quality Runs. This quality filtering is based on the dada2 pipeline.
 
