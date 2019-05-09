@@ -8,7 +8,7 @@ library(tidyverse)
 #-----------------------
 #PARAMETERS;
 loc1 =paste(args[1],"/FastqFiles", sep='')
-loc2=paste(args[1],"/DB/BigData.fa.gz",sep='')
+loc2=paste(args[3],sep='')
 loc3=paste(args[2], "/taxa_SRA.csv",sep='')
 loc4=paste(args[2], "/abundances_SRA.csv",sep='')
 loc5=paste(args[2], "/abundances2_SRA.csv",sep='')
