@@ -47,19 +47,23 @@ optional arguments:
   -h, --help            show help message and exit
 
   -c [COLUMNS COLUMNS ...], --columns [COLUMNS COLUMNS ...]
-			Specify column names that should be in the samples.csv file. It’s recommended you use a column that can identify the sample's place of isolation. 
-			replace spaces in column names by underscores. Multiple column names can be used as input, separated by spaces. 
-			If the option remains unspecified the program will automatically search for the column names from a default list (see samples_SRA.csv).
+			Specify column names that should be in the samples.csv file. It’s recommended you use a column that can 
+			identify the sample's place of isolation. Replace spaces in column names by underscores. 
+			Multiple column names can be used as input, separated by spaces. If the option remains unspecified the 
+			program will automatically search for the column names from a default list (see samples_SRA.csv).
 
-  --output output directory, -o output directory
+  --output output directory/filename, -o output directory/filename
                         Output directory, default is current working directory.
   --threads {1,2,4}, -t {1,2,4}
-                        Amount of threads used for downloading runs from ncbi, default is 1. Note that whatever you choose for this command line option, 
-			dada2 (used for processing and classifying the .fastq sequences) uses all threads. 
+                        Amount of threads used for downloading runs from ncbi, default is 1. Note that whatever you choose for this
+			command line option, dada2 (used for processing and classifying the .fastq sequences) uses all threads. 
 			Multithreaded performance does not scale perfectly with the number of threads used, 
 			but for large queries the difference in runtime is significant.
   --keep directory, -k directory 
 			Directory you want to store the downloaded fastq files. They will be deleted by default.
+  --database, -d directory/filename
+  			Specify the directory and filename of a costum database. By default it will used the database that comes with
+			this program (./DB/BigData.fa.gz). More info on the costum database can be found in the 'database' section.
 
 Output --------------
 
@@ -97,8 +101,10 @@ It’s filtered in a way that only one bacterial 16S rRNA sequence is included f
 The second database is based on a wgs Lactobacillus database provided by Stijn Wittouck where the 16S rRNA from every entry was extracted using barrnap (by Torsten Seemann). 
 From here we filtered out the sequences that are under 1400 bp long. Next some sequences were removed as to only leave one 16S rRNA sequence for every Lactobacillus species. 
 The species name was then replaced by a subgenus name based on a paper by Duar et al. [1].
-You can use your own database by overwriting the current one with a zipped (.gz) fasta file(.fa) that has the same name as the current database (‘BigData.fa.gz’). 
-The database location is: /path_to_program_directory/DB/
+You can use your own database by using the command line option '--database' or '-d'. You'll have to specify the directory/filename.
+Make sure your costum database is in accordance with the DADA2 requirements. Fasta headers must contain the following taxonomical levels, seperated by a semi-colon: Kingdom;Phylum;Class;Order;Family;genus;Species. 
+The database file must be a zipped (.gz) fasta file (.fa). 
+The default database directory location is: /path_to_program_directory/DB/
 
 Pitfalls --------------
 
