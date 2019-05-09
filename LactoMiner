@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument("--output","-o", help="Output directory, default is working directory.", default = str(os.getcwd()))
     parser.add_argument("--threads","-t", help="Amount of threads used for downloading from ncbi. Default is 1 threads", default = '1')
     parser.add_argument("--keep", "-k", help="Directory you want to store the downloaded fastq files. They will be deleted by default.")
+    parser.add_argument("--database","-d", help="File path to costum database", default = os.path.dirname(os.path.realpath(__file__)).replace(' ','\ ') + '/DB/BigData.fa.gz')
     args = parser.parse_args()
     #define folder where script is running
     execpath = os.path.dirname(os.path.realpath(__file__)).replace(' ','\ ')
@@ -98,7 +99,7 @@ if __name__ == "__main__":
             print('removing ' + filname + 'because the data is not PAIRED')
             os.system('rm ' + execpath + "/FastqFiles/" + filname)
     #Run the dada2 script
-    os.system('Rscript --vanilla ' + execpath + '/scripts/Script2.R ' + execpath + ' ' + args.output.replace(' ','\ '))
+    os.system('Rscript --vanilla ' + execpath + '/scripts/Script2.R ' + execpath + ' ' + args.output.replace(' ','\ ') + ' ' + args.database)
     
     #decide whether to keep or remove the fastq files based on input
     if args.keep is not None:
